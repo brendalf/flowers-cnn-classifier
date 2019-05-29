@@ -13,15 +13,11 @@ import os
 import sys
 import json
 import torch
-import numpy as np
-import torch.nn.functional as F
-import matplotlib.pyplot as plt
 
 from torch import nn
-from PIL import Image
 from torch import optim
 
-from train_args import get_args
+from args import get_train_args
 from train_models import get_model, train_model
 from train_dataloaders import get_dataloaders
 
@@ -41,7 +37,7 @@ def main():
         'densenet201'
     ]
 
-    cli_args = get_args(__author__, __version__, archs)
+    cli_args = get_train_args(__author__, __version__, archs)
 
     # Variables
     data_dir = cli_args.data_dir
