@@ -46,6 +46,7 @@ def main():
     # Variables
     data_dir = cli_args.data_dir
     save_dir = cli_args.save_dir
+    save_name = cli_args.save_name
     categories_json = cli_args.categories_json
     arch = cli_args.arch
     learning_rate = cli_args.learning_rate
@@ -64,7 +65,7 @@ def main():
         exit(1)
 
     # Load the data
-    dataloaders = get_dataloaders(data_dir, norm_means, norm_std, image_size, image_size_crop)
+    image_datasets, dataloaders = get_dataloaders(data_dir, norm_means, norm_std, image_size, image_size_crop)
 
     # Check the categories file
     if not os.path.isfile(categories_json):
@@ -94,9 +95,23 @@ def main():
     # Train the model
     train_model(model, dataloaders['training'], dataloaders['validation'], criterion, optimizer, epochs, gpu)
 
+    # Prepare to save
+    model.class_to_idx = image_datasets['training'].class_to_idx
+    model_state = {
+        'epoch': epochs,
+        'state_dict': model.state_dict(),
+        'optimizer_dict': optimizer.state_dict(),
+        'classifier': model.classifier,
+        'class_to_idx': model.class_to_idx,
+        'arch': arch
+    }
+
     # Check and create the save directory
     if not os.path.isdir(save_dir):
         os.makedirs(save_dir)
+
+    save_location = f'{save_dir}/{save_name}.pth'
+    torch.save(model_state, save_location)    
 
 if __name__ == '__main__':
     try:

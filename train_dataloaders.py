@@ -43,7 +43,7 @@ def get_dataloaders(data_dir, norm_means, norm_std, image_size=256, image_size_c
     }
 
     # Data Loaders
-    return {
+    return image_datasets, {
         'training': torch.utils.data.DataLoader(image_datasets['training'], batch_size, shuffle=True),
         'validation': torch.utils.data.DataLoader(image_datasets['validation'], batch_size)
     }
